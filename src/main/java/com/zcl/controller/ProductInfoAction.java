@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -28,11 +29,40 @@ import java.util.List;
 @Controller
 @RequestMapping("/prod")
 public class ProductInfoAction {
-    // 定义每页查询的条数
-    private static final int PAGE_SIZE = 5;
-
     @Autowired
     ProductInfoService productInfoMapper;
+
+    /**
+     * 定义每页查询的条数
+     */
+    private static final int PAGE_SIZE = 5;
+
+    /**
+     * 提高异步上传图片的名称
+     */
+    String saveFileName = "";
+
+    @RequestMapping("/save")
+    public String save(ProductInfo info,HttpServletRequest request){
+        // 给上传的文件名称复制
+        info.setpImage(saveFileName);
+        // 给添加商品的时间为当前时间
+        info.setpDate(new Date());
+        // 调用service的保存数据方法
+        int num = -1;
+        try {
+            num = productInfoMapper.save(info);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (num > 0) {
+            request.setAttribute("msg","商品增加成功");
+        }else{
+            request.setAttribute("msg","商品增加失败");
+        }
+        // 保存成功之后，应该重新定向访问数据层，所以跳到分页显示的action上
+        return "forward:/prod/split.action";
+    }
 
     /**
      * ajax异步图片上传
@@ -43,7 +73,8 @@ public class ProductInfoAction {
     @RequestMapping("ajaxImg")
     public Object ajaxImg(MultipartFile pimage,HttpServletRequest request){
         // 1、调用工具类生成上文文件的32为名称和后缀
-        String saveFileName = FileNameUtil.getUUIDFileName() + FileNameUtil.getFileType(pimage.getOriginalFilename());
+        saveFileName = FileNameUtil.getUUIDFileName() + FileNameUtil.getFileType(pimage.getOriginalFilename());
+        System.out.println("上传图片的名称："+saveFileName);
         // 2、得到项目中图片的存储路径
         String path = request.getServletContext().getRealPath("/image_big");
         // 3、转存图片到本地,File.separator代表反斜杠

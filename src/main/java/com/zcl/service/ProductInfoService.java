@@ -26,4 +26,11 @@ public interface ProductInfoService {
      * @return
      */
     PageInfo splitPage(int pageNum,int pageSize);
+
+    /**
+     * 保存商品添加数据
+     * @param info
+     * @return
+     */
+    int save(ProductInfo info);
 }

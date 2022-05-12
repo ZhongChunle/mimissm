@@ -53,4 +53,14 @@ public class ProductInfoServiceImpl implements ProductInfoService {
         PageInfo<ProductInfo> pageInfo = new PageInfo<>(list);
         return pageInfo;
     }
+
+    /**
+     * 保存商品信息
+     * @param info
+     * @return
+     */
+    @Override
+    public int save(ProductInfo info) {
+        return productInfoMapper.insert(info);
+    }
 }
