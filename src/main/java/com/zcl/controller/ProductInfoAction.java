@@ -3,14 +3,19 @@ package com.zcl.controller;
 import com.github.pagehelper.PageInfo;
 import com.zcl.pojo.ProductInfo;
 import com.zcl.service.ProductInfoService;
+import com.zcl.utils.FileNameUtil;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -28,6 +33,31 @@ public class ProductInfoAction {
 
     @Autowired
     ProductInfoService productInfoMapper;
+
+    /**
+     * ajax异步图片上传
+     * @param pimage 对应上传图片的name
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("ajaxImg")
+    public Object ajaxImg(MultipartFile pimage,HttpServletRequest request){
+        // 1、调用工具类生成上文文件的32为名称和后缀
+        String saveFileName = FileNameUtil.getUUIDFileName() + FileNameUtil.getFileType(pimage.getOriginalFilename());
+        // 2、得到项目中图片的存储路径
+        String path = request.getServletContext().getRealPath("/image_big");
+        // 3、转存图片到本地,File.separator代表反斜杠
+        try {
+            pimage.transferTo(new File(path+File.separator+saveFileName));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        // 4、返回客户端json对象，封装图片的路径，为了在页面及时回显【导入了json依赖坐标】
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("imgurl",saveFileName);
+        // 想要返回json格式需要进行转换，这是json工具的特点
+        return jsonObject.toString();
+    }
 
     /**
      * 不分页查询数据
