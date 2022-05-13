@@ -33,4 +33,18 @@ public interface ProductInfoService {
      * @return
      */
     int save(ProductInfo info);
+
+    /**
+     * 根据商品id查询商品数据
+     * @param id
+     * @return
+     */
+    ProductInfo getByID(int id);
+
+    /**
+     * 更新商品接口
+     * @param info
+     * @return
+     */
+    int update(ProductInfo info);
 }

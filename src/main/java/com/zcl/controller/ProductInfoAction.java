@@ -7,13 +7,16 @@ import com.zcl.utils.FileNameUtil;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.jws.WebParam;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import javax.xml.ws.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
@@ -42,6 +45,53 @@ public class ProductInfoAction {
      */
     String saveFileName = "";
 
+    /**
+     * 更新商品数据
+     * @param info
+     * @param request
+     * @return
+     */
+    @RequestMapping("/update")
+    public String update(ProductInfo info,HttpServletRequest request){
+        // 对重新上传图片信息进行处理，如果上传图片就重新赋值
+        if(!saveFileName.equals("")){
+            info.setpImage(saveFileName);
+        }
+        int num = -1;
+        try {
+            num = productInfoMapper.update(info);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if(num > 0){
+            request.setAttribute("msg","商品数据更新成功");
+        }else {
+            request.setAttribute("msg", "商品信息更新失败");
+        }
+        // 再次清空文件上传变量为空
+        saveFileName = "";
+        return "forward:/prod/split.action";
+    }
+
+    /**
+     * 根据商品id查询数据回显
+     * @param pid
+     * @param model
+     * @return
+     */
+    @RequestMapping("/one")
+    public String one(int pid, Model model){
+        ProductInfo info = productInfoMapper.getByID(pid);
+        model.addAttribute("prod",info);
+        return "update";
+    }
+
+    /**
+     * 保存商品数据
+     * @param info
+     * @param request
+     * @return
+     */
     @RequestMapping("/save")
     public String save(ProductInfo info,HttpServletRequest request){
         // 给上传的文件名称复制
@@ -60,6 +110,8 @@ public class ProductInfoAction {
         }else{
             request.setAttribute("msg","商品增加失败");
         }
+        // 清空saveFileName，为了下一步的增加或修改的异步上传处理
+        saveFileName = "";
         // 保存成功之后，应该重新定向访问数据层，所以跳到分页显示的action上
         return "forward:/prod/split.action";
     }

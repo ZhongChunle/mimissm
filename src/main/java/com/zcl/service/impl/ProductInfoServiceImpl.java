@@ -63,4 +63,24 @@ public class ProductInfoServiceImpl implements ProductInfoService {
     public int save(ProductInfo info) {
         return productInfoMapper.insert(info);
     }
+
+    /**
+     * 根据商品id完成数据查询
+     * @param id
+     * @return
+     */
+    @Override
+    public ProductInfo getByID(int id) {
+        return productInfoMapper.selectByPrimaryKey(id);
+    }
+
+    /**
+     * 更新商品的操作
+     * @param info
+     * @return
+     */
+    @Override
+    public int update(ProductInfo info) {
+        return productInfoMapper.updateByPrimaryKey(info);
+    }
 }
