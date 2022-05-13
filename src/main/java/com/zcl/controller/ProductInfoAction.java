@@ -6,6 +6,7 @@ import com.zcl.service.ProductInfoService;
 import com.zcl.utils.FileNameUtil;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,6 +45,44 @@ public class ProductInfoAction {
      * 提高异步上传图片的名称
      */
     String saveFileName = "";
+
+    /**
+     * 接收删除数据的id
+     * @param pid
+     * @return
+     */
+    @RequestMapping("/delete")
+    public String delete(int pid,HttpServletRequest request){
+        int num = -1;
+        try {
+            num = productInfoMapper.delete(pid);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // 进行成功的提示
+        if(num > 0){
+            request.setAttribute("msg","商品数据删除成功");
+        }else {
+            request.setAttribute("msg", "商品删除失败");
+        }
+        // 删除结束后跳转ajax分页处理
+        return "forward:/prod/deleteAjaxSplit.action";
+    }
+
+
+    /**
+     * 删除数据成功后的查询第一页数据返回
+     * @param request
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value = "/deleteAjaxSplit",produces = "text/html;charset=UTF-8")
+    public Object deleteAjaxSplit(HttpServletRequest request){
+        // 获取第一页的分页数据
+        PageInfo info = productInfoMapper.splitPage(1,PAGE_SIZE);
+        request.getSession().setAttribute("info",info);
+        return request.getAttribute("msg");
+    }
 
     /**
      * 更新商品数据

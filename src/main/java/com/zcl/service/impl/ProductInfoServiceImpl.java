@@ -83,4 +83,14 @@ public class ProductInfoServiceImpl implements ProductInfoService {
     public int update(ProductInfo info) {
         return productInfoMapper.updateByPrimaryKey(info);
     }
+
+    /**
+     * 根据商品id上传数据
+     * @param pid
+     * @return
+     */
+    @Override
+    public int delete(int pid) {
+        return productInfoMapper.deleteByPrimaryKey(pid);
+    }
 }

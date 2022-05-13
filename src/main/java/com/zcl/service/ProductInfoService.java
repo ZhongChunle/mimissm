@@ -47,4 +47,11 @@ public interface ProductInfoService {
      * @return
      */
     int update(ProductInfo info);
+
+    /**
+     * 根据商品id删除数据
+     * @param pid
+     * @return
+     */
+    int delete(int pid);
 }
