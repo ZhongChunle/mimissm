@@ -24,6 +24,16 @@ public class ProductInfoServiceImpl implements ProductInfoService {
     ProductInfoMapper productInfoMapper;
 
     /**
+     * 批量删除商品数据
+     * @param ids
+     * @return
+     */
+    @Override
+    public int deleyeBatch(String[] ids) {
+        return productInfoMapper.deleteBatch(ids);
+    }
+
+    /**
      * 不分页查询所有数据
      * @return
      */

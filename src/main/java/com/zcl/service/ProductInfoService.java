@@ -14,6 +14,13 @@ import java.util.List;
  */
 public interface ProductInfoService {
     /**
+     * 批量删除业务逻辑层的代码接口
+     * @param ids
+     * @return
+     */
+    int deleyeBatch(String []ids);
+
+    /**
      * 1、查询所有商城信息（不分页）
      * @return
      */

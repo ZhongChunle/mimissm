@@ -28,4 +28,11 @@ public interface ProductInfoMapper {
     int updateByPrimaryKeySelective(ProductInfo record);
 
     int updateByPrimaryKey(ProductInfo record);
+
+    /**
+     * 批量删除商品功能
+     * @param ids
+     * @return
+     */
+    int deleteBatch(String[] ids);
 }

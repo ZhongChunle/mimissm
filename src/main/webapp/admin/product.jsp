@@ -33,10 +33,11 @@
         });
     }
 
+    // 商品单个复选框点击事件
     function ckClick() {
-        //取得所有name=ck的被选中的复选框
+        //取得所有name=ck的被选中的复选框长度
         var length=$("input[name=ck]:checked").length;
-//取得所有name=ck的复选框
+        //取得所有name=ck的复选框的长度
         var len=$("input[name=ck]").length;
         //比较
         if(len == length){
@@ -180,7 +181,6 @@
 
     //批量删除
     function deleteBatch() {
-
             //取得所有被选中删除商品的pid
             var zhi=$("input[name=ck]:checked");
             var str="";
@@ -194,14 +194,22 @@
                     $.each(zhi,function (index,item) {
 
                         id=$(item).val(); //22 33
-                        alert(id);
                         if(id!=null)
                             str += id+",";  //22,33,44
                     });
-alert(str+"11111111");
+                    // alert(str+"11111111");
                     //发送请求到服务器端
-                   // window.location="${pageContext.request.contextPath}/prod/deletebatch.action?str="+str;
-
+                    $.ajax({
+                        url:"${pageContext.request.contextPath}/prod/deleteBatch.action",
+                        data: {"pids":str},
+                        type:"post",
+                        dateType:"text",
+                        success: function (msg){
+                            alert(msg);
+                            // 将页面上的显示商品数据的容器重新加载
+                            $("#table").load("http://localhost:8080/admin/product.jsp #table");
+                        }
+                    });
                 }
         }
     }
