@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.zcl.mapper.ProductInfoMapper;
 import com.zcl.pojo.ProductInfo;
 import com.zcl.pojo.ProductInfoExample;
+import com.zcl.pojo.Vo.ProductInfoVo;
 import com.zcl.service.ProductInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,30 @@ import java.util.List;
 public class ProductInfoServiceImpl implements ProductInfoService {
     @Autowired
     ProductInfoMapper productInfoMapper;
+
+    /**
+     * 多条件查询分页效果
+     * @param vo
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public PageInfo<ProductInfo> splitPageVo(ProductInfoVo vo, int pageSize) {
+        // 分页插件的硬性要求，必须的
+        PageHelper.startPage(vo.getPage(), pageSize);
+        List<ProductInfo> list = productInfoMapper.selectCondition(vo);
+        return new PageInfo<>(list);
+    }
+
+    /**
+     * 多条件查询商品数据
+     * @param vo
+     * @return
+     */
+    @Override
+    public List<ProductInfo> selectCondition(ProductInfoVo vo) {
+        return productInfoMapper.selectCondition(vo);
+    }
 
     /**
      * 批量删除商品数据

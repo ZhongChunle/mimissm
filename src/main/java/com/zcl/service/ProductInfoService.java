@@ -2,6 +2,7 @@ package com.zcl.service;
 
 import com.github.pagehelper.PageInfo;
 import com.zcl.pojo.ProductInfo;
+import com.zcl.pojo.Vo.ProductInfoVo;
 
 import java.util.List;
 
@@ -13,6 +14,22 @@ import java.util.List;
  * @date 2022-05-12 15:13
  */
 public interface ProductInfoService {
+
+    /**
+     * 多条件查询分页
+     * @param vo
+     * @param pageSize
+     * @return
+     */
+    PageInfo splitPageVo(ProductInfoVo vo, int pageSize);
+
+    /**
+     * 多条件查询接口
+     * @param vo
+     * @return
+     */
+    List<ProductInfo> selectCondition(ProductInfoVo vo);
+
     /**
      * 批量删除业务逻辑层的代码接口
      * @param ids

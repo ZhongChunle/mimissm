@@ -58,12 +58,12 @@
             商品名称：<input name="pname" id="pname">&nbsp;&nbsp;&nbsp;
             商品类型：<select name="typeid" id="typeid">
             <option value="-1">请选择</option>
-            <c:forEach items="${ptlist}" var="pt">
+            <c:forEach items="${typeList}" var="pt">
                 <option value="${pt.typeId}">${pt.typeName}</option>
             </c:forEach>
         </select>&nbsp;&nbsp;&nbsp;
             价格：<input name="lprice" id="lprice">-<input name="hprice" id="hprice">
-            <input type="button" value="查询" onclick="ajaxsplit(${info.pageNum})">
+            <input type="button" value="查询" onclick="condition()">
         </form>
     </div>
     <br>
@@ -231,18 +231,44 @@
             })
         }
     }
-
+    // 编辑回显
     function one(pid, ispage) {
-        location.href = "${pageContext.request.contextPath}/prod/one.action?pid=" + pid + "&page=" + ispage;
+        // 多条件查询
+        var pname = $("#pname").val();
+        var typeid = $("#typeid").val();
+        var lprice = $("#lprice").val();
+        var hprice = $("#hprice").val();
+        var str = "?pid="+pid+"&page="+ispage+"&pname="+pname+"&typeid="+typeid+"&lprice="+lprice+"&hprice="+hprice
+        location.href = "${pageContext.request.contextPath}/prod/one.action" + str;
+    }
+
+    // 商品多条件查询
+    function condition(){
+        var pname = $("#pname").val();
+        var typeid = $("#typeid").val();
+        var lprice = $("#lprice").val();
+        var hprice = $("#hprice").val();
+        $.ajax({
+            type:"post",
+            url:"${pageContext.request.contextPath}/prod/ajaxsplit.action",
+            data:{"pname":pname,"typeid":typeid,"lprice":lprice,"hprice":hprice},
+            success: function(){
+                $("#table").load("http://localhost:8080/admin/product.jsp #table");
+            }
+        });
     }
 </script>
 <!--分页的AJAX实现-->
 <script type="text/javascript">
     function ajaxsplit(page) {
+        var pname = $("#pname").val();
+        var typeid = $("#typeid").val();
+        var lprice = $("#lprice").val();
+        var hprice = $("#hprice").val();
         //异步ajax分页请求
         $.ajax({
         url:"${pageContext.request.contextPath}/prod/ajaxsplit.action",
-            data:{"page":page},
+            data:{"page":page,"pname":pname,"typeid":typeid,"lprice":lprice,"hprice":hprice},
             type:"post",
             success:function () {
                 //重新加载分页显示的组件table

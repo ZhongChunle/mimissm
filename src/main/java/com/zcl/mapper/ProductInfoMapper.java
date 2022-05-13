@@ -2,6 +2,7 @@ package com.zcl.mapper;
 
 import com.zcl.pojo.ProductInfo;
 import com.zcl.pojo.ProductInfoExample;
+import com.zcl.pojo.Vo.ProductInfoVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -35,4 +36,11 @@ public interface ProductInfoMapper {
      * @return
      */
     int deleteBatch(String[] ids);
+
+    /**
+     * 多条件查询接口
+     * @param vo
+     * @return
+     */
+    List<ProductInfo> selectCondition(ProductInfoVo vo);
 }

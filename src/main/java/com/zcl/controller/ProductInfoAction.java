@@ -2,6 +2,7 @@ package com.zcl.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.zcl.pojo.ProductInfo;
+import com.zcl.pojo.Vo.ProductInfoVo;
 import com.zcl.service.ProductInfoService;
 import com.zcl.utils.FileNameUtil;
 import org.json.JSONObject;
@@ -45,6 +46,31 @@ public class ProductInfoAction {
      * 提高异步上传图片的名称
      */
     String saveFileName = "";
+
+    /**
+     * ajax分页效果
+     * @param vo
+     * @param session
+     */
+    @ResponseBody
+    @RequestMapping("ajaxsplit")
+    public void ajaxsplit(ProductInfoVo vo, HttpSession session){
+        // 得到当前分页查询的数据
+        PageInfo  info = productInfoMapper.splitPageVo(vo,PAGE_SIZE);
+        session.setAttribute("info",info);
+    }
+
+    /**
+     * 商品管理的多条件查询
+     * @param vo
+     * @param session
+     */
+    @ResponseBody
+    @RequestMapping("/condition")
+    public void condition(ProductInfoVo vo,HttpSession session){
+        List<ProductInfo> list = productInfoMapper.selectCondition(vo);
+        session.setAttribute("list",list);
+    }
 
     /**
      * 根据结束的批量删除的字符串id删除数据
@@ -143,9 +169,11 @@ public class ProductInfoAction {
      * @return
      */
     @RequestMapping("/one")
-    public String one(int pid, Model model){
+    public String one(int pid,ProductInfoVo vo, Model model,HttpSession session){
         ProductInfo info = productInfoMapper.getByID(pid);
         model.addAttribute("prod",info);
+        // 将多条件查询数据存储到session中，更新数据处理结束后读取条件和页码
+        session.setAttribute("prodVo",vo);
         return "update";
     }
 
@@ -224,21 +252,18 @@ public class ProductInfoAction {
      */
     @RequestMapping("/split")
     public String split(HttpServletRequest request){
-        PageInfo info = productInfoMapper.splitPage(1,PAGE_SIZE);
+        PageInfo info = null;
+        // 获取session的值
+        Object vo = request.getSession().getAttribute("prodVo");
+        if(vo != null){
+            info = productInfoMapper.splitPageVo((ProductInfoVo) vo,PAGE_SIZE);
+            // 清除session
+            request.getSession().removeAttribute("prodVo");
+        }else{
+            info = productInfoMapper.splitPage(1,PAGE_SIZE);
+        }
         request.setAttribute("info",info);
         return "product";
     }
 
-    /**
-     * ajax分页效果
-     * @param page 当前页数
-     * @param session
-     */
-    @ResponseBody
-    @RequestMapping("ajaxsplit")
-    public void ajaxsplit(int page, HttpSession session){
-        // 得到当前分页查询的数据
-        PageInfo  info = productInfoMapper.splitPage(page,PAGE_SIZE);
-        session.setAttribute("info",info);
-    }
 }

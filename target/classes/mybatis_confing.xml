@@ -2,6 +2,10 @@
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
+    <!--配置此语句，在单元测试的时候就会将执行的sql语句一并打印出来，方便查看是否有语句错误-->
+    <settings>
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+    </settings>
     <!--1、配置分插件拦截器-->
     <plugins>
         <plugin interceptor="com.github.pagehelper.PageInterceptor"></plugin>

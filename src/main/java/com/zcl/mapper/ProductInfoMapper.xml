@@ -180,6 +180,36 @@
       <include refid="Example_Where_Clause" />
     </if>
   </select>
+
+  <!--多条件查询-->
+  <select id="selectCondition" parameterType="com.zcl.pojo.Vo.ProductInfoVo" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include>
+    from product_info
+    <where>
+      <!--当商品名称不为空的时候，进行模糊查询-->
+      <if test="pname != null and pname != ''">
+        and p_name like '%${pname}%'
+      </if>
+      <!--商品类型查询-->
+      <if test="typeid != null and typeid != -1">
+        and type_id = #{typeid}
+      </if>
+      <!--当最低价格不空，最高价格为空，就查询大于最低价格的商品数据-->
+      <if test="(lprice != null and lprice != '') and (hprice == null or hprice == '')">
+        and p_price &gt;= #{lprice}
+      </if>
+      <!--当最低价格为空，最高价格不为空，就查询小于最高价格的商品数据-->
+      <if test="(lprice == null or lprice == '') and (hprice != null and hprice != '')">
+        and p_price &lt;= #{lprice}
+      </if>
+      <!--当最低价格不为空，最高价格不为空，就查询小于最高价格和大于最低价格的商品数据-->
+      <if test="(lprice != null and lprice != '') and (hprice != null and hprice != '')">
+        and p_price between #{lprice} and #{hprice}
+      </if>
+    </where>
+    order by p_id desc
+  </select>
+
   <update id="updateByExampleSelective" parameterType="map" >
     update product_info
     <set >
